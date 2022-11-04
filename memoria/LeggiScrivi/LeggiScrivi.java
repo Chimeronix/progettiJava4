@@ -54,22 +54,24 @@ public class LeggiScrivi extends Application {
 			lettoreDiRighe.close();
 			flussoCaratteri.close();
 		} catch (FileNotFoundException e1) {
-			System.out.println("File non trovato");
+			txtfVuota.setText("File non trovato");
+			e1.printStackTrace();
 		} catch (IOException e2) {
-			System.out.println("Errore nella lettura");
+			txtfVuota.setText("Errore nella lettura");
+			e2.printStackTrace();
 		}
 	}
 	
 	
 	private void funzioneScrivi() {
-		String testo = txtfVuota.getText();
 		FileWriter fwFileMemoria;
 		try {
 			fwFileMemoria = new FileWriter("C:\\Users\\alexandrobrugnoni\\Desktop\\memoria.txt");
-			fwFileMemoria.write(testo+"\n");
+			fwFileMemoria.write(txtfVuota.getText()+"\n");
 			fwFileMemoria.close();
 		} catch (IOException e) {
-			System.out.println("Errore nella scrittura");;
+			txtfVuota.setText("Errore nella scrittura");
+			e.printStackTrace();
 		}
 	}
 	

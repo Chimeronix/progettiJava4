@@ -4,7 +4,7 @@ public class Bicicletta extends AMuscoli {
 	private int numeroDiRapporti;
 	private double peso;
 	
-	
+
 	
 	public Bicicletta(double costo, double peso) {
 		this.costo = costo;
