@@ -20,15 +20,15 @@ public class Contatto {
 	}
 	
 	public String toCsv() {
-		String rappresentazione;
-		rappresentazione = nome + "," + cognome + "," + numero + "," + dataDiNascita;
-		return rappresentazione;
+		String csvStr;
+		csvStr = nome + "," + cognome + "," + numero + "," + dataDiNascita + "\n";
+		return csvStr;
 	}
 	
 	public String toString() {
-		String rappresentazione;
-		rappresentazione = nome + "," + cognome + "," + numero + "," + dataDiNascita;
-		return rappresentazione;
+		String rappStr;
+		rappStr = nome + " , " + cognome + ", " + numero + "\n" + "Data di nascita: " +dataDiNascita;
+		return rappStr;
 	}
 
 	public String getNome() {
