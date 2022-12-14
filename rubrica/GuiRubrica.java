@@ -1,29 +1,31 @@
 package rubrica;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 
 public class GuiRubrica extends Application {
 
-	// TODO
-	 /*
-	 * Funzione cambia percorso, da sistemare
-	 * Funzione cerca, con i dati cercare una persona nel csv
-	 */
 	Contatto nuovoContatto;
-
+	javafx.stage.Window finestra;
 	
 	TextField txtfPercorso = new TextField();
 	TextField txtfNome = new TextField();
@@ -31,7 +33,7 @@ public class GuiRubrica extends Application {
 	TextField txtfTelefono = new TextField();
 	TextField txtfDataNascita = new TextField();
 	ListView <Contatto> lvRubrica = new ListView<>();
-	ListView <Contatto> lvPersonaCercata = new ListView<>();
+	ListView <String> lvPersonaCercata = new ListView<>();
 
 	public void start(Stage primaryStage) {
 
@@ -39,6 +41,7 @@ public class GuiRubrica extends Application {
 		Text txtCognome = new Text("Cognome:");
 		Text txtTelefono = new Text("Telefono:");
 		Text txtDataNascita = new Text("Data di nascita:");
+		finestra = primaryStage;
 
 		Button bCambia = new Button("Cambia");
 		bCambia.setOnAction(e -> cambiaPercorso());
@@ -63,6 +66,7 @@ public class GuiRubrica extends Application {
 		pannello.setVgap(10);
 
 		pannello.add(txtfPercorso, 0, 0, 4, 1);
+		txtfPercorso.setEditable(false);
 		txtfPercorso.setMaxWidth(Integer.MAX_VALUE);
 		pannello.add(bCambia, 4, 0);
 		bCambia.setMaxWidth(Integer.MAX_VALUE);
@@ -76,6 +80,7 @@ public class GuiRubrica extends Application {
 		pannello.add(txtDataNascita, 3, 4);
 		pannello.add(txtfDataNascita, 4, 4);
 		pannello.add(bCerca, 3, 5);
+		pannello.add(lvPersonaCercata, 3, 6, 2, 1);
 		bCerca.setMaxWidth(Integer.MAX_VALUE);
 		pannello.add(bAggiungi, 4, 5);
 		bAggiungi.setMaxWidth(Integer.MAX_VALUE);
@@ -86,8 +91,16 @@ public class GuiRubrica extends Application {
 		pannello.add(bElimina, 2, 7);
 		bElimina.setMaxWidth(Integer.MAX_VALUE);
 
+		if(txtfPercorso.getText() == "") {
+			txtfNome.setEditable(false);
+			txtfCognome.setEditable(false);
+			txtfTelefono.setEditable(false);
+			txtfDataNascita.setEditable(false);
+		} 
+		
 		Scene scena = new Scene(pannello);
-
+		
+		primaryStage.setResizable(false);
 		primaryStage.setTitle("Rubrica");
 		primaryStage.setScene(scena);
 		primaryStage.show();
@@ -97,7 +110,19 @@ public class GuiRubrica extends Application {
 
 	private void cambiaPercorso() {
 		
-
+		FileChooser selettoreFile = new FileChooser();
+		String cartellaPartenza = System.getProperties().getProperty("user.home");
+		selettoreFile.setInitialDirectory(new File(cartellaPartenza));
+		selettoreFile.getExtensionFilters().addAll(new ExtensionFilter("File CSV", "*.csv"));
+		
+		File fileSelezionato = selettoreFile.showOpenDialog(finestra);
+		txtfPercorso.setText(fileSelezionato.toString());
+		
+		txtfNome.setEditable(true);
+		txtfCognome.setEditable(true);
+		txtfTelefono.setEditable(true);
+		txtfDataNascita.setEditable(true);
+		
 	}
 
 
@@ -114,8 +139,10 @@ public class GuiRubrica extends Application {
 		
 		if(personaTrovata) {
 			System.out.println("Persona trovata");
+			lvPersonaCercata.getItems().add(nomePersona + " " + cognomePersona + " è presente nella lista!");
 		} else {
-			System.out.println("Persona non trovata");
+			System.out.println("Persona trovata");
+			lvPersonaCercata.getItems().add(nomePersona + " " + cognomePersona + " non è presente nella lista!");
 		}
 	}
 
@@ -137,7 +164,15 @@ public class GuiRubrica extends Application {
 			}
 			fwOP.close();
 		} catch(IOException e) {
-			e.printStackTrace();
+			Alert dialogoAllerta = new Alert(AlertType.CONFIRMATION, "File non trovato, controllare il percorso.");
+			dialogoAllerta.setTitle("ERRORE");
+			dialogoAllerta.setHeaderText("Non riesco a trovare il file :(");
+			dialogoAllerta.setResizable(false);
+			dialogoAllerta.setGraphic(null);
+			Optional<ButtonType> risposta = dialogoAllerta.showAndWait();
+			if(risposta.isPresent() && risposta.get() == ButtonType.OK) {
+			    txtfPercorso.selectAll();
+			}
 		}
 	}
 
@@ -158,9 +193,16 @@ public class GuiRubrica extends Application {
 			lettoreDiRighe.close();
 			fr.close();
 		} catch(IOException e) {
-			e.printStackTrace();
+			Alert dialogoAllerta = new Alert(AlertType.CONFIRMATION, "File non trovato, controllare il percorso.");
+			Optional<ButtonType> risposta = dialogoAllerta.showAndWait();
+			dialogoAllerta.setTitle("ERRORE");
+			dialogoAllerta.setHeaderText("Non riesco a trovare il file :(");
+			dialogoAllerta.setResizable(false);
+			dialogoAllerta.setGraphic(null);
+			if(risposta.isPresent() && risposta.get() == ButtonType.OK) {
+			    txtfPercorso.selectAll();
+			}
 		}
-
 	}
 
 
